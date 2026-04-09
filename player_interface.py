@@ -2,41 +2,64 @@ import random
 from abc import ABC, abstractmethod
 
 class Player(ABC):
-    def __init__(self):
+    def __init__(self, grid_size=10):
+        self.grid_size = grid_size
         self.moves = []
         self.position = (0, 0)
         self.path = [self.position]
 
     def make_move(self):
+        if not self.moves:
+            return self.position
+
         move = random.choice(self.moves)
-        # গাণিতিক যোগফল বের করে সরাসরি আপডেট
-        self.position = (self.position[0] + move[0], self.position[1] + move[1])
-        self.path.append(self.position)
-        return self.position
+        
+        # Calculate potential new coordinates
+        new_x = self.position[0] + move[0]
+        new_y = self.position[1] + move[1]
+
+        # Boundary Check: Stay within 0 to grid_size-1
+        if 0 <= new_x < self.grid_size and 0 <= new_y < self.grid_size:
+            self.position = (new_x, new_y)
+            self.path.append(self.position)
+            return self.position
+        else:
+            return self.position
 
     @abstractmethod
     def level_up(self):
         pass
 
 class Pawn(Player):
-    def __init__(self):
-        super().__init__()
-        # Up, Down, Left, Right
+    def __init__(self, grid_size=10):
+        super().__init__(grid_size)
+        # Initial moves: Up, Down, Left, Right
         self.moves = [(0, 1), (0, -1), (-1, 0), (1, 0)]
 
     def level_up(self):
-        # Diagonal movements
         diagonal_moves = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
-        self.moves.extend(diagonal_moves)
-        # ১. একটি Pawn অবজেক্ট তৈরি করুন
+        for move in diagonal_moves:
+            if move not in self.moves:
+                self.moves.append(move)
+        print("\n✨ Level Up! Diagonal moves unlocked. ✨")
+
 if __name__ == "__main__":
-    pawn = Pawn()
-    print(f"Initial Position: {pawn.position}")
-    
-    pawn.make_move()
-    print(f"First Move: {pawn.position}")
-    
-    pawn.make_move()
-    print(f"Second Move: {pawn.position}")
-    
-    print(f"Full Path: {pawn.path}")
+    pawn = Pawn(grid_size=10)
+    print(f"Starting Position: {pawn.position}")
+
+    print("\n--- Initial Movements ---")
+    for i in range(5):
+        pos = pawn.make_move()
+        print(f"Move {i+1}: {pos}")
+
+    pawn.level_up()
+
+    print("\n--- Post Level-Up Movements ---")
+    for i in range(5):
+        pos = pawn.make_move()
+        print(f"Move {i+6}: {pos}")
+
+    print("-" * 30)
+    print(f"Final Position: {pawn.position}")
+    print(f"Full Path Recorded: {pawn.path}")
+    print("-" * 30)
