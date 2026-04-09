@@ -63,3 +63,12 @@ if __name__ == "__main__":
     print(f"Final Position: {pawn.position}")
     print(f"Full Path Recorded: {pawn.path}")
     print("-" * 30)
+    print("\n--- Searching for Treasure (9, 9) ---")
+    while pawn.position != (9, 9):
+        pos = pawn.make_move()
+        print(f"Current Position: {pos}")
+        if len(pawn.path) > 100: 
+            print("Pawn is tired! Game Over.")
+            break       
+    if pawn.position == (9, 9):
+        print("\n🎉 Victory! The Pawn reached the target (9, 9)!")
